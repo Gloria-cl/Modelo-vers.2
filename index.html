@@ -448,6 +448,27 @@
             });
         }
 
+        // Función para dividir texto en líneas
+        function dividirTexto(texto, maxCaracteres = 16) {
+            if (texto.length <= maxCaracteres) return [texto];
+            const palabras = texto.split(" ");
+            const lineas = [];
+            let lineaActual = "";
+            
+            palabras.forEach(palabra => {
+                if ((lineaActual + " " + palabra).length <= maxCaracteres || lineaActual === "") {
+                    lineaActual += (lineaActual ? " " : "") + palabra;
+                } else {
+                    if (lineaActual) lineas.push(lineaActual);
+                    lineaActual = palabra;
+                }
+            });
+            
+            if (lineaActual) lineas.push(lineaActual);
+            if (lineas.length > 3) return [lineas[0], lineas[1], lineas[2] + "..."];
+            return lineas;
+        }
+
         // Renderizar categorías
         function renderCategories() {
             const container = document.getElementById('categories-container');
@@ -547,7 +568,6 @@
                 progressContainer.appendChild(progressItem);
             });
 
-            // Actualizar recomendaciones
             updateRecommendations();
         }
 
@@ -626,21 +646,38 @@
             // Crear elementos base del SVG
             const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
             
-            // Filtro de sombra
+            // Filtro de sombra mejorado
             const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
             filter.setAttribute('id', 'dropShadow');
-            filter.setAttribute('x', '-50%');
-            filter.setAttribute('y', '-50%');
-            filter.setAttribute('width', '200%');
-            filter.setAttribute('height', '200%');
+            filter.setAttribute('x', '-200%');
+            filter.setAttribute('y', '-200%');
+            filter.setAttribute('width', '400%');
+            filter.setAttribute('height', '400%');
             
-            const dropShadow = document.createElementNS('http://www.w3.org/2000/svg', 'feDropShadow');
-            dropShadow.setAttribute('dx', '0');
-            dropShadow.setAttribute('dy', '2');
-            dropShadow.setAttribute('stdDeviation', '4');
-            dropShadow.setAttribute('flood-color', 'rgba(0,0,0,0.2)');
+            const feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+            feGaussianBlur.setAttribute('in', 'SourceAlpha');
+            feGaussianBlur.setAttribute('stdDeviation', '3');
+            feGaussianBlur.setAttribute('result', 'blur');
             
-            filter.appendChild(dropShadow);
+            const feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
+            feOffset.setAttribute('in', 'blur');
+            feOffset.setAttribute('dx', '0');
+            feOffset.setAttribute('dy', '2');
+            feOffset.setAttribute('result', 'offsetBlur');
+            
+            const feFlood = document.createElementNS('http://www.w3.org/2000/svg', 'feFlood');
+            feFlood.setAttribute('flood-color', '#000000');
+            feFlood.setAttribute('flood-opacity', '0.3');
+            
+            const feComposite = document.createElementNS('http://www.w3.org/2000/svg', 'feComposite');
+            feComposite.setAttribute('in', 'SourceGraphic');
+            feComposite.setAttribute('in2', 'offsetBlur');
+            feComposite.setAttribute('operator', 'over');
+            
+            filter.appendChild(feGaussianBlur);
+            filter.appendChild(feOffset);
+            filter.appendChild(feFlood);
+            filter.appendChild(feComposite);
             defs.appendChild(filter);
 
             // Gradiente central
@@ -710,20 +747,23 @@
                     line.setAttribute('opacity', '0.4');
                     svg.appendChild(line);
 
-                    // Etiqueta
+                    // Etiquetas de texto mejoradas
+                    const lineasTexto = dividirTexto(item.nombre, 16);
                     const esLadoDerecho = x2 > 450;
                     const offsetX = esLadoDerecho ? 18 : -18;
                     
-                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    text.setAttribute('x', x2 + offsetX);
-                    text.setAttribute('y', y2);
-                    text.setAttribute('text-anchor', esLadoDerecho ? 'start' : 'end');
-                    text.setAttribute('fill', '#475569');
-                    text.setAttribute('font-size', '11');
-                    text.setAttribute('font-weight', '500');
-                    text.setAttribute('dominant-baseline', 'central');
-                    text.textContent = item.nombre.length > 16 ? item.nombre.substring(0, 16) + '...' : item.nombre;
-                    svg.appendChild(text);
+                    lineasTexto.forEach((lineaTexto, lineaIndex) => {
+                        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                        text.setAttribute('x', x2 + offsetX);
+                        text.setAttribute('y', y2 + (lineaIndex - (lineasTexto.length - 1) / 2) * 12);
+                        text.setAttribute('text-anchor', esLadoDerecho ? 'start' : 'end');
+                        text.setAttribute('fill', '#475569');
+                        text.setAttribute('font-size', '11');
+                        text.setAttribute('font-weight', '500');
+                        text.setAttribute('dominant-baseline', 'central');
+                        text.textContent = lineaTexto;
+                        svg.appendChild(text);
+                    });
                 });
             });
 
@@ -733,180 +773,4 @@
             line1.setAttribute('y1', '450');
             line1.setAttribute('x2', '810');
             line1.setAttribute('y2', '450');
-            line1.setAttribute('stroke', '#cbd5e1');
-            line1.setAttribute('stroke-width', '2');
-            line1.setAttribute('stroke-dasharray', '10,5');
-            svg.appendChild(line1);
-
-            const line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line2.setAttribute('x1', '450');
-            line2.setAttribute('y1', '90');
-            line2.setAttribute('x2', '450');
-            line2.setAttribute('y2', '810');
-            line2.setAttribute('stroke', '#cbd5e1');
-            line2.setAttribute('stroke-width', '2');
-            line2.setAttribute('stroke-dasharray', '10,5');
-            svg.appendChild(line2);
-
-            // Etiquetas de cuadrantes
-            const labels = [
-                { nombre: "Rehabilitación", x: 60, y: 60 },
-                { nombre: "Diseño", x: 750, y: 60 },
-                { nombre: "Gestión", x: 60, y: 814 },
-                { nombre: "Construcción", x: 750, y: 814 }
-            ];
-
-            labels.forEach(label => {
-                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                rect.setAttribute('x', label.x);
-                rect.setAttribute('y', label.y);
-                rect.setAttribute('width', '90');
-                rect.setAttribute('height', '26');
-                rect.setAttribute('rx', '13');
-                rect.setAttribute('fill', coloresCuadrante[label.nombre]);
-                rect.setAttribute('opacity', '0.9');
-                svg.appendChild(rect);
-
-                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttribute('x', label.x + 45);
-                text.setAttribute('y', label.y + 16);
-                text.setAttribute('text-anchor', 'middle');
-                text.setAttribute('fill', 'white');
-                text.setAttribute('font-size', '12');
-                text.setAttribute('font-weight', '600');
-                text.setAttribute('dominant-baseline', 'central');
-                text.textContent = label.nombre;
-                svg.appendChild(text);
-            });
-
-            // Puntos de datos
-            Object.entries(dataPorCuadrante).forEach(([cuadrante, datos]) => {
-                datos.forEach(item => {
-                    const anguloRad = ((item.angulo - 90) * Math.PI) / 180;
-                    let valor = modoVisualizacion === "actual" 
-                        ? (indicadoresActuales[item.id] ? item.valor : 0) 
-                        : item.valor;
-                    const radio = (valor / 3) * 340;
-                    const x = 450 + Math.cos(anguloRad) * radio;
-                    const y = 450 + Math.sin(anguloRad) * radio;
-                    const tamaño = 5 + valor * 3;
-
-                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                    circle.setAttribute('cx', x);
-                    circle.setAttribute('cy', y);
-                    circle.setAttribute('r', tamaño);
-                    circle.setAttribute('stroke', 'white');
-                    circle.setAttribute('stroke-width', '2');
-                    circle.setAttribute('filter', 'url(#dropShadow)');
-                    circle.setAttribute('style', 'cursor: pointer; transition: all 0.2s ease');
-
-                    if (modoVisualizacion === "actual") {
-                        circle.setAttribute('fill', indicadoresActuales[item.id] ? coloresCuadrante[cuadrante] : '#e2e8f0');
-                        circle.setAttribute('opacity', indicadoresActuales[item.id] ? '0.9' : '0.3');
-                    } else {
-                        circle.setAttribute('fill', coloresCuadrante[cuadrante]);
-                        circle.setAttribute('opacity', '0.9');
-                    }
-
-                    svg.appendChild(circle);
-
-                    // Texto del valor
-                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    text.setAttribute('x', x);
-                    text.setAttribute('y', y + 3);
-                    text.setAttribute('text-anchor', 'middle');
-                    text.setAttribute('fill', 'white');
-                    text.setAttribute('font-size', '9');
-                    text.setAttribute('font-weight', '700');
-                    text.setAttribute('style', 'pointer-events: none');
-                    text.textContent = modoVisualizacion === "actual" 
-                        ? (indicadoresActuales[item.id] ? item.valor : "0")
-                        : item.valor;
-                    svg.appendChild(text);
-                });
-            });
-        }
-
-        // Event listeners para controles
-        function setupControls() {
-            // Botones de cuadrante
-            document.getElementById('btn-todos').addEventListener('click', () => {
-                cuadranteSeleccionado = "todos";
-                updateActiveButton('btn-todos', ['btn-todos', 'btn-diseno', 'btn-construccion', 'btn-gestion', 'btn-rehabilitacion']);
-                renderChart();
-            });
-
-            document.getElementById('btn-diseno').addEventListener('click', () => {
-                cuadranteSeleccionado = "Diseño";
-                updateActiveButton('btn-diseno', ['btn-todos', 'btn-diseno', 'btn-construccion', 'btn-gestion', 'btn-rehabilitacion']);
-                renderChart();
-            });
-
-            document.getElementById('btn-construccion').addEventListener('click', () => {
-                cuadranteSeleccionado = "Construcción";
-                updateActiveButton('btn-construccion', ['btn-todos', 'btn-diseno', 'btn-construccion', 'btn-gestion', 'btn-rehabilitacion']);
-                renderChart();
-            });
-
-            document.getElementById('btn-gestion').addEventListener('click', () => {
-                cuadranteSeleccionado = "Gestión";
-                updateActiveButton('btn-gestion', ['btn-todos', 'btn-diseno', 'btn-construccion', 'btn-gestion', 'btn-rehabilitacion']);
-                renderChart();
-            });
-
-            document.getElementById('btn-rehabilitacion').addEventListener('click', () => {
-                cuadranteSeleccionado = "Rehabilitación";
-                updateActiveButton('btn-rehabilitacion', ['btn-todos', 'btn-diseno', 'btn-construccion', 'btn-gestion', 'btn-rehabilitacion']);
-                renderChart();
-            });
-
-            // Botones de modo
-            document.getElementById('btn-actual').addEventListener('click', () => {
-                modoVisualizacion = "actual";
-                updateActiveButton('btn-actual', ['btn-actual', 'btn-ideal']);
-                document.getElementById('btn-actual').style.backgroundColor = '#2563eb';
-                document.getElementById('btn-ideal').style.backgroundColor = 'white';
-                renderChart();
-            });
-
-            document.getElementById('btn-ideal').addEventListener('click', () => {
-                modoVisualizacion = "ideal";
-                updateActiveButton('btn-ideal', ['btn-actual', 'btn-ideal']);
-                document.getElementById('btn-ideal').style.backgroundColor = '#16a34a';
-                document.getElementById('btn-actual').style.backgroundColor = 'white';
-                renderChart();
-            });
-        }
-
-        function updateActiveButton(activeId, groupIds) {
-            groupIds.forEach(id => {
-                const btn = document.getElementById(id);
-                if (id === activeId) {
-                    btn.classList.add('active');
-                    if (id.includes('btn-') && !id.includes('actual') && !id.includes('ideal') && !id.includes('todos')) {
-                        const color = btn.style.getPropertyValue('--color');
-                        if (color) btn.style.backgroundColor = color;
-                    }
-                } else {
-                    btn.classList.remove('active');
-                    if (id.includes('btn-') && !id.includes('actual') && !id.includes('ideal')) {
-                        btn.style.backgroundColor = 'white';
-                    }
-                }
-            });
-        }
-
-        // Inicializar aplicación
-        function init() {
-            initializeState();
-            renderCategories();
-            updateStats();
-            renderChart();
-            setupControls();
-        }
-
-        // Ejecutar cuando la página esté lista
-        document.addEventListener('DOMContentLoaded', init);
-    </script>
-</body>
-</html>
+            line
