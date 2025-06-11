@@ -891,10 +891,14 @@
             const svg = document.getElementById('main-chart');
             
             if (cuadranteSeleccionado === "todos") {
+                // Para "todos", crear polígonos conectando solo los puntos de cada cuadrante
                 Object.entries(dataPorCuadrante).forEach(([cuadrante, datos]) => {
                     const puntos = [];
                     
-                    datos.forEach(item => {
+                    // Ordenar los puntos por ángulo para crear un polígono correcto
+                    const datosOrdenados = [...datos].sort((a, b) => a.angulo - b.angulo);
+                    
+                    datosOrdenados.forEach(item => {
                         const anguloRad = ((item.angulo - 90) * Math.PI) / 180;
                         let valor = modoVisualizacion === "actual" 
                             ? (indicadoresActuales[item.id] ? item.valor : 0) 
@@ -905,6 +909,7 @@
                         puntos.push(`${x},${y}`);
                     });
                     
+                    // Solo crear polígono si hay más de 2 puntos
                     if (puntos.length > 2) {
                         const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
                         polygon.setAttribute('points', puntos.join(' '));
@@ -917,7 +922,7 @@
                     }
                 });
             } else {
-                // Polígono para cuadrante individual
+                // Polígono para cuadrante individual - usar distribución radial uniforme
                 const datos = dataPorCuadrante[cuadranteSeleccionado];
                 if (datos) {
                     const puntos = [];
