@@ -465,7 +465,6 @@
             });
             
             if (lineaActual) lineas.push(lineaActual);
-            if (lineas.length > 3) return [lineas[0], lineas[1], lineas[2] + "..."];
             return lineas;
         }
 
@@ -654,30 +653,13 @@
             filter.setAttribute('width', '400%');
             filter.setAttribute('height', '400%');
             
-            const feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
-            feGaussianBlur.setAttribute('in', 'SourceAlpha');
-            feGaussianBlur.setAttribute('stdDeviation', '3');
-            feGaussianBlur.setAttribute('result', 'blur');
+            const feDropShadow = document.createElementNS('http://www.w3.org/2000/svg', 'feDropShadow');
+            feDropShadow.setAttribute('dx', '0');
+            feDropShadow.setAttribute('dy', '2');
+            feDropShadow.setAttribute('stdDeviation', '3');
+            feDropShadow.setAttribute('flood-color', 'rgba(0,0,0,0.25)');
             
-            const feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
-            feOffset.setAttribute('in', 'blur');
-            feOffset.setAttribute('dx', '0');
-            feOffset.setAttribute('dy', '2');
-            feOffset.setAttribute('result', 'offsetBlur');
-            
-            const feFlood = document.createElementNS('http://www.w3.org/2000/svg', 'feFlood');
-            feFlood.setAttribute('flood-color', '#000000');
-            feFlood.setAttribute('flood-opacity', '0.3');
-            
-            const feComposite = document.createElementNS('http://www.w3.org/2000/svg', 'feComposite');
-            feComposite.setAttribute('in', 'SourceGraphic');
-            feComposite.setAttribute('in2', 'offsetBlur');
-            feComposite.setAttribute('operator', 'over');
-            
-            filter.appendChild(feGaussianBlur);
-            filter.appendChild(feOffset);
-            filter.appendChild(feFlood);
-            filter.appendChild(feComposite);
+            filter.appendChild(feDropShadow);
             defs.appendChild(filter);
 
             // Gradiente central
@@ -773,4 +755,287 @@
             line1.setAttribute('y1', '450');
             line1.setAttribute('x2', '810');
             line1.setAttribute('y2', '450');
-            line
+            line1.setAttribute('stroke', '#cbd5e1');
+            line1.setAttribute('stroke-width', '2');
+            line1.setAttribute('stroke-dasharray', '10,5');
+            svg.appendChild(line1);
+
+            const line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line2.setAttribute('x1', '450');
+            line2.setAttribute('y1', '90');
+            line2.setAttribute('x2', '450');
+            line2.setAttribute('y2', '810');
+            line2.setAttribute('stroke', '#cbd5e1');
+            line2.setAttribute('stroke-width', '2');
+            line2.setAttribute('stroke-dasharray', '10,5');
+            svg.appendChild(line2);
+
+            // Crear espiral de referencia para "todos"
+            if (cuadranteSeleccionado === "todos") {
+                const espiralPath = crearEspiralReferencia();
+                if (espiralPath) svg.appendChild(espiralPath);
+            }
+
+            // Crear polígonos de área antes de los puntos
+            crearPoligonosArea();
+
+            // Etiquetas de cuadrantes
+            const labels = [
+                { nombre: "Rehabilitación", x: 60, y: 60 },
+                { nombre: "Diseño", x: 750, y: 60 },
+                { nombre: "Gestión", x: 60, y: 814 },
+                { nombre: "Construcción", x: 750, y: 814 }
+            ];
+
+            labels.forEach(label => {
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', label.x);
+                rect.setAttribute('y', label.y);
+                rect.setAttribute('width', '90');
+                rect.setAttribute('height', '26');
+                rect.setAttribute('rx', '13');
+                rect.setAttribute('fill', coloresCuadrante[label.nombre]);
+                rect.setAttribute('opacity', '0.9');
+                svg.appendChild(rect);
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', label.x + 45);
+                text.setAttribute('y', label.y + 16);
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('fill', 'white');
+                text.setAttribute('font-size', '12');
+                text.setAttribute('font-weight', '600');
+                text.setAttribute('dominant-baseline', 'central');
+                text.textContent = label.nombre;
+                svg.appendChild(text);
+            });
+
+            // Puntos de datos
+            Object.entries(dataPorCuadrante).forEach(([cuadrante, datos]) => {
+                datos.forEach(item => {
+                    const anguloRad = ((item.angulo - 90) * Math.PI) / 180;
+                    let valor = modoVisualizacion === "actual" 
+                        ? (indicadoresActuales[item.id] ? item.valor : 0) 
+                        : item.valor;
+                    const radio = (valor / 3) * 340;
+                    const x = 450 + Math.cos(anguloRad) * radio;
+                    const y = 450 + Math.sin(anguloRad) * radio;
+                    const tamaño = 5 + valor * 3;
+
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('cx', x);
+                    circle.setAttribute('cy', y);
+                    circle.setAttribute('r', tamaño);
+                    circle.setAttribute('stroke', 'white');
+                    circle.setAttribute('stroke-width', '2');
+                    circle.setAttribute('filter', 'url(#dropShadow)');
+                    circle.setAttribute('style', 'cursor: pointer; transition: all 0.2s ease');
+
+                    if (modoVisualizacion === "actual") {
+                        circle.setAttribute('fill', indicadoresActuales[item.id] ? coloresCuadrante[cuadrante] : '#e2e8f0');
+                        circle.setAttribute('opacity', indicadoresActuales[item.id] ? '0.9' : '0.3');
+                    } else {
+                        circle.setAttribute('fill', coloresCuadrante[cuadrante]);
+                        circle.setAttribute('opacity', '0.9');
+                    }
+
+                    svg.appendChild(circle);
+
+                    // Texto del valor
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', x);
+                    text.setAttribute('y', y + 3);
+                    text.setAttribute('text-anchor', 'middle');
+                    text.setAttribute('fill', 'white');
+                    text.setAttribute('font-size', '9');
+                    text.setAttribute('font-weight', '700');
+                    text.setAttribute('style', 'pointer-events: none');
+                    text.textContent = modoVisualizacion === "actual" 
+                        ? (indicadoresActuales[item.id] ? item.valor : "0")
+                        : item.valor;
+                    svg.appendChild(text);
+                });
+            });
+        }
+
+        // Crear espiral de referencia
+        function crearEspiralReferencia() {
+            const puntosEspiral = [];
+            const centroX = 450, centroY = 450, vueltas = 2.2;
+            
+            for (let i = 0; i <= 360 * vueltas; i += 3) {
+                const anguloRad = ((i - 90) * Math.PI) / 180;
+                const radio = 90 + (i / (360 * vueltas)) * 320;
+                const x = centroX + Math.cos(anguloRad) * radio;
+                const y = centroY + Math.sin(anguloRad) * radio;
+                puntosEspiral.push({ x, y });
+            }
+
+            if (puntosEspiral.length > 0) {
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                const d = `M ${puntosEspiral[0].x} ${puntosEspiral[0].y} ` + 
+                         puntosEspiral.slice(1).map(p => `L ${p.x} ${p.y}`).join(' ');
+                path.setAttribute('d', d);
+                path.setAttribute('stroke', '#94a3b8');
+                path.setAttribute('stroke-width', '2');
+                path.setAttribute('fill', 'none');
+                path.setAttribute('opacity', '0.3');
+                path.setAttribute('stroke-dasharray', '5,5');
+                return path;
+            }
+            return null;
+        }
+
+        // Crear polígonos de área con transparencia
+        function crearPoligonosArea() {
+            const svg = document.getElementById('main-chart');
+            
+            if (cuadranteSeleccionado === "todos") {
+                Object.entries(dataPorCuadrante).forEach(([cuadrante, datos]) => {
+                    const puntos = [];
+                    
+                    datos.forEach(item => {
+                        const anguloRad = ((item.angulo - 90) * Math.PI) / 180;
+                        let valor = modoVisualizacion === "actual" 
+                            ? (indicadoresActuales[item.id] ? item.valor : 0) 
+                            : item.valor;
+                        const radio = (valor / 3) * 340;
+                        const x = 450 + Math.cos(anguloRad) * radio;
+                        const y = 450 + Math.sin(anguloRad) * radio;
+                        puntos.push(`${x},${y}`);
+                    });
+                    
+                    if (puntos.length > 2) {
+                        const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                        polygon.setAttribute('points', puntos.join(' '));
+                        polygon.setAttribute('fill', coloresCuadrante[cuadrante]);
+                        polygon.setAttribute('opacity', '0.15');
+                        polygon.setAttribute('stroke', coloresCuadrante[cuadrante]);
+                        polygon.setAttribute('stroke-width', '1');
+                        polygon.setAttribute('stroke-opacity', '0.3');
+                        svg.appendChild(polygon);
+                    }
+                });
+            } else {
+                // Polígono para cuadrante individual
+                const datos = dataPorCuadrante[cuadranteSeleccionado];
+                if (datos) {
+                    const puntos = [];
+                    
+                    datos.forEach((item, index) => {
+                        const anguloIncremento = 360 / datos.length;
+                        const anguloRadar = index * anguloIncremento;
+                        const anguloRad = ((anguloRadar - 90) * Math.PI) / 180;
+                        let valor = modoVisualizacion === "actual" 
+                            ? (indicadoresActuales[item.id] ? item.valor : 0) 
+                            : item.valor;
+                        const radio = (valor / 3) * 340;
+                        const x = 450 + Math.cos(anguloRad) * radio;
+                        const y = 450 + Math.sin(anguloRad) * radio;
+                        puntos.push(`${x},${y}`);
+                    });
+                    
+                    if (puntos.length > 2) {
+                        const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                        polygon.setAttribute('points', puntos.join(' '));
+                        polygon.setAttribute('fill', coloresCuadrante[cuadranteSeleccionado]);
+                        polygon.setAttribute('opacity', '0.2');
+                        polygon.setAttribute('stroke', coloresCuadrante[cuadranteSeleccionado]);
+                        polygon.setAttribute('stroke-width', '2');
+                        svg.appendChild(polygon);
+                    }
+                }
+            }
+        }
+
+        // Event listeners para controles
+        function setupControls() {
+            // Botones de cuadrante
+            document.getElementById('btn-todos').addEventListener('click', () => {
+                cuadranteSeleccionado = "todos";
+                updateActiveButton('btn-todos', ['btn-todos', 'btn-diseno', 'btn-construccion', 'btn-gestion', 'btn-rehabilitacion']);
+                renderChart();
+            });
+
+            document.getElementById('btn-diseno').addEventListener('click', () => {
+                cuadranteSeleccionado = "Diseño";
+                updateActiveButton('btn-diseno', ['btn-todos', 'btn-diseno', 'btn-construccion', 'btn-gestion', 'btn-rehabilitacion']);
+                renderChart();
+            });
+
+            document.getElementById('btn-construccion').addEventListener('click', () => {
+                cuadranteSeleccionado = "Construcción";
+                updateActiveButton('btn-construccion', ['btn-todos', 'btn-diseno', 'btn-construccion', 'btn-gestion', 'btn-rehabilitacion']);
+                renderChart();
+            });
+
+            document.getElementById('btn-gestion').addEventListener('click', () => {
+                cuadranteSeleccionado = "Gestión";
+                updateActiveButton('btn-gestion', ['btn-todos', 'btn-diseno', 'btn-construccion', 'btn-gestion', 'btn-rehabilitacion']);
+                renderChart();
+            });
+
+            document.getElementById('btn-rehabilitacion').addEventListener('click', () => {
+                cuadranteSeleccionado = "Rehabilitación";
+                updateActiveButton('btn-rehabilitacion', ['btn-todos', 'btn-diseno', 'btn-construccion', 'btn-gestion', 'btn-rehabilitacion']);
+                renderChart();
+            });
+
+            // Botones de modo
+            document.getElementById('btn-actual').addEventListener('click', () => {
+                modoVisualizacion = "actual";
+                updateActiveButton('btn-actual', ['btn-actual', 'btn-ideal']);
+                document.getElementById('btn-actual').style.backgroundColor = '#2563eb';
+                document.getElementById('btn-actual').style.color = 'white';
+                document.getElementById('btn-ideal').style.backgroundColor = 'white';
+                document.getElementById('btn-ideal').style.color = '#64748b';
+                renderChart();
+            });
+
+            document.getElementById('btn-ideal').addEventListener('click', () => {
+                modoVisualizacion = "ideal";
+                updateActiveButton('btn-ideal', ['btn-actual', 'btn-ideal']);
+                document.getElementById('btn-ideal').style.backgroundColor = '#16a34a';
+                document.getElementById('btn-ideal').style.color = 'white';
+                document.getElementById('btn-actual').style.backgroundColor = 'white';
+                document.getElementById('btn-actual').style.color = '#64748b';
+                renderChart();
+            });
+        }
+
+        function updateActiveButton(activeId, groupIds) {
+            groupIds.forEach(id => {
+                const btn = document.getElementById(id);
+                if (id === activeId) {
+                    btn.classList.add('active');
+                    if (id.includes('btn-') && !id.includes('actual') && !id.includes('ideal') && !id.includes('todos')) {
+                        const color = btn.style.getPropertyValue('--color');
+                        if (color) {
+                            btn.style.backgroundColor = color;
+                            btn.style.color = 'white';
+                        }
+                    }
+                } else {
+                    btn.classList.remove('active');
+                    if (id.includes('btn-') && !id.includes('actual') && !id.includes('ideal')) {
+                        btn.style.backgroundColor = 'white';
+                        btn.style.color = '#64748b';
+                    }
+                }
+            });
+        }
+
+        // Inicializar aplicación
+        function init() {
+            initializeState();
+            renderCategories();
+            updateStats();
+            renderChart();
+            setupControls();
+        }
+
+        // Ejecutar cuando la página esté lista
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
