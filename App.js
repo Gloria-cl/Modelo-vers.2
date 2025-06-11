@@ -748,71 +748,6 @@ function App() {
                           style: {
                             fontSize: "13px",
                             fontWeight: "700",
-                            color: "#f59e0b",
-                          },
-                        },
-                        "Importantes"
-                      ),
-                      React.createElement(
-                        "span",
-                        {
-                          style: {
-                            fontSize: "16px",
-                            fontWeight: "800",
-                            color: "#f59e0b",
-                          },
-                        },
-                        "2.0-2.9"
-                      )
-                    ),
-                    React.createElement(
-                      "div",
-                      {
-                        style: {
-                          fontSize: "11px",
-                          lineHeight: "1.2",
-                          wordWrap: "break-word",
-                          overflow: "hidden",
-                          color: "#374151",
-                          fontWeight: "400",
-                        },
-                      },
-                      categorizarFaltantes.importantes
-                        .map((item) => item.nombre)
-                        .join(", ")
-                    )
-                  ),
-                categorizarFaltantes.complementarios.length > 0 &&
-                  React.createElement(
-                    "div",
-                    {
-                      style: {
-                        backgroundColor: "white",
-                        border: "2px solid #6b7280",
-                        padding: "12px 16px",
-                        borderRadius: "8px",
-                        fontSize: "12px",
-                        fontWeight: "600",
-                        width: "100%",
-                        boxSizing: "border-box",
-                      },
-                    },
-                    React.createElement(
-                      "div",
-                      {
-                        style: {
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          marginBottom: "6px",
-                        },
-                      },
-                      React.createElement(
-                        "span",
-                        {
-                          style: {
-                            fontSize: "13px",
-                            fontWeight: "700",
                             color: "#6b7280",
                           },
                         },
@@ -1296,7 +1231,9 @@ function App() {
       )
     )
   );
-} "100%",
+}: "12px",
+                        fontWeight: "600",
+                        width: "100%",
                         boxSizing: "border-box",
                       },
                     },
@@ -1361,4 +1298,67 @@ function App() {
                         borderRadius: "8px",
                         fontSize: "12px",
                         fontWeight: "600",
-                        width:
+                        width: "100%",
+                        boxSizing: "border-box",
+                      },
+                    },
+                    React.createElement(
+                      "div",
+                      {
+                        style: {
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: "6px",
+                        },
+                      },
+                      React.createElement(
+                        "span",
+                        {
+                          style: {
+                            fontSize: "13px",
+                            fontWeight: "700",
+                            color: "#f59e0b",
+                          },
+                        },
+                        "Importantes"
+                      ),
+                      React.createElement(
+                        "span",
+                        {
+                          style: {
+                            fontSize: "16px",
+                            fontWeight: "800",
+                            color: "#f59e0b",
+                          },
+                        },
+                        "2.0-2.9"
+                      )
+                    ),
+                    React.createElement(
+                      "div",
+                      {
+                        style: {
+                          fontSize: "11px",
+                          lineHeight: "1.2",
+                          wordWrap: "break-word",
+                          overflow: "hidden",
+                          color: "#374151",
+                          fontWeight: "400",
+                        },
+                      },
+                      categorizarFaltantes.importantes
+                        .map((item) => item.nombre)
+                        .join(", ")
+                    )
+                  ),
+                categorizarFaltantes.complementarios.length > 0 &&
+                  React.createElement(
+                    "div",
+                    {
+                      style: {
+                        backgroundColor: "white",
+                        border: "2px solid #6b7280",
+                        padding: "12px 16px",
+                        borderRadius: "8px",
+                        fontSize
