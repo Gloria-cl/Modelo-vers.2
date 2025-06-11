@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from "react";
+const { useState, useMemo } = React;
 
-export default function App() {
+function App() {
   const dataPorCuadrante = {
     Diseño: [
       { nombre: "Funcionalidad", valor: 3.0, angulo: 10, id: "funcionalidad" },
@@ -370,7 +370,6 @@ export default function App() {
       centroY = 450;
     const poligonosConCentro = {};
 
-    // SOLO crear polígonos desde el centro para la vista "todos"
     if (cuadranteSeleccionado === "todos") {
       Object.keys(coloresCuadrante).forEach((cuadrante) => {
         const puntosCuadrante = puntosMostrar.filter(
@@ -392,7 +391,6 @@ export default function App() {
         }
       });
     }
-    // NO crear triángulos para vistas individuales
 
     return poligonosConCentro;
   };
@@ -400,53 +398,63 @@ export default function App() {
   const poligonosConCentro = crearPoligonosDesdeCentro();
   const espiralReferencia = crearEspiralReferencia();
 
-  return (
-    <div
-      style={{
+  return React.createElement(
+    "div",
+    {
+      style: {
         width: "100%",
         minHeight: "100vh",
         padding: "20px",
         fontFamily: "'Inter', 'Segoe UI', sans-serif",
         backgroundColor: "#f8fafc",
-      }}
-    >
-      <div
-        style={{
+      },
+    },
+    React.createElement(
+      "div",
+      {
+        style: {
           textAlign: "center",
           marginBottom: "30px",
           padding: "25px",
           backgroundColor: "white",
           borderRadius: "12px",
           boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-        }}
-      >
-        <h1
-          style={{
+        },
+      },
+      React.createElement(
+        "h1",
+        {
+          style: {
             fontSize: "28px",
             fontWeight: "700",
             color: "#1e293b",
             margin: "0 0 10px 0",
-          }}
-        >
-          Modelo de Estrategias de Viabilidad para Espacios Públicos
-        </h1>
-        <p style={{ fontSize: "16px", color: "#64748b", margin: "0" }}>
-          Priorización Estratégica - Diagnóstico
-        </p>
-      </div>
-
-      <div
-        style={{
+          },
+        },
+        "Modelo de Estrategias de Viabilidad para Espacios Públicos"
+      ),
+      React.createElement(
+        "p",
+        { style: { fontSize: "16px", color: "#64748b", margin: "0" } },
+        "Priorización Estratégica - Diagnóstico"
+      )
+    ),
+    React.createElement(
+      "div",
+      {
+        style: {
           display: "flex",
           gap: "20px",
           marginBottom: "30px",
           justifyContent: "center",
           maxWidth: "940px",
           margin: "0 auto 30px auto",
-        }}
-      >
-        <div
-          style={{
+        },
+      },
+      React.createElement(
+        "div",
+        {
+          style: {
             width: "480px",
             backgroundColor: "white",
             borderRadius: "12px",
@@ -454,29 +462,37 @@ export default function App() {
             boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
             maxHeight: "600px",
             overflowY: "auto",
-          }}
-        >
-          <h3
-            style={{ margin: "0 0 20px 0", color: "#1e293b", fontSize: "18px" }}
-          >
-            Selecciona las categorías presentes en tu espacio
-          </h3>
-          {Object.entries(dataPorCuadrante).map(([cuadrante, items]) => (
-            <div key={cuadrante} style={{ marginBottom: "20px" }}>
-              <h4
-                style={{
+          },
+        },
+        React.createElement(
+          "h3",
+          {
+            style: { margin: "0 0 20px 0", color: "#1e293b", fontSize: "18px" },
+          },
+          "Selecciona las categorías presentes en tu espacio"
+        ),
+        Object.entries(dataPorCuadrante).map(([cuadrante, items]) =>
+          React.createElement(
+            "div",
+            { key: cuadrante, style: { marginBottom: "20px" } },
+            React.createElement(
+              "h4",
+              {
+                style: {
                   color: coloresCuadrante[cuadrante],
                   fontSize: "16px",
                   fontWeight: "600",
                   margin: "0 0 10px 0",
-                }}
-              >
-                {cuadrante}
-              </h4>
-              {items.map((item) => (
-                <label
-                  key={item.id}
-                  style={{
+                },
+              },
+              cuadrante
+            ),
+            items.map((item) =>
+              React.createElement(
+                "label",
+                {
+                  key: item.id,
+                  style: {
                     display: "flex",
                     alignItems: "center",
                     padding: "8px",
@@ -489,366 +505,367 @@ export default function App() {
                     border: indicadoresActuales[item.id]
                       ? "1px solid #e0f2fe"
                       : "1px solid transparent",
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={indicadoresActuales[item.id]}
-                    onChange={() => toggleIndicador(item.id)}
-                    style={{
-                      marginRight: "10px",
-                      accentColor: coloresCuadrante[cuadrante],
-                    }}
-                  />
-                  <span style={{ fontSize: "14px", color: "#374151" }}>
-                    {item.nombre}
-                    <span style={{ color: "#9ca3af", fontSize: "12px" }}>
-                      {" "}
-                      (valor: {item.valor})
-                    </span>
-                  </span>
-                </label>
-              ))}
-            </div>
-          ))}
-        </div>
-
-        <div
-          style={{
+                  },
+                },
+                React.createElement("input", {
+                  type: "checkbox",
+                  checked: indicadoresActuales[item.id],
+                  onChange: () => toggleIndicador(item.id),
+                  style: {
+                    marginRight: "10px",
+                    accentColor: coloresCuadrante[cuadrante],
+                  },
+                }),
+                React.createElement(
+                  "span",
+                  { style: { fontSize: "14px", color: "#374151" } },
+                  item.nombre,
+                  React.createElement(
+                    "span",
+                    { style: { color: "#9ca3af", fontSize: "12px" } },
+                    " (valor: " + item.valor + ")"
+                  )
+                )
+              )
+            )
+          )
+        )
+      ),
+      React.createElement(
+        "div",
+        {
+          style: {
             width: "480px",
             backgroundColor: "white",
             borderRadius: "12px",
             padding: "20px",
             boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-          }}
-        >
-          <h3
-            style={{ margin: "0 0 20px 0", color: "#1e293b", fontSize: "18px" }}
-          >
-            Diagnóstico del Espacio
-          </h3>
-          <div
-            style={{
+          },
+        },
+        React.createElement(
+          "h3",
+          {
+            style: { margin: "0 0 20px 0", color: "#1e293b", fontSize: "18px" },
+          },
+          "Diagnóstico del Espacio"
+        ),
+        React.createElement(
+          "div",
+          {
+            style: {
               textAlign: "center",
               padding: "15px",
               backgroundColor: "#f8fafc",
               borderRadius: "8px",
               marginBottom: "15px",
-            }}
-          >
-            <div
-              style={{ fontSize: "32px", fontWeight: "700", color: "#1e293b" }}
-            >
-              {estadisticas.porcentaje}%
-            </div>
-            <div style={{ fontSize: "13px", color: "#64748b" }}>
-              Índice de Viabilidad
-            </div>
-            <div
-              style={{ fontSize: "11px", color: "#9ca3af", marginTop: "2px" }}
-            >
-              {estadisticas.presentes} de {estadisticas.total} categorías
-            </div>
-          </div>
-          <div style={{ marginBottom: "15px" }}>
-            <h4
-              style={{
+            },
+          },
+          React.createElement(
+            "div",
+            {
+              style: { fontSize: "32px", fontWeight: "700", color: "#1e293b" },
+            },
+            estadisticas.porcentaje + "%"
+          ),
+          React.createElement(
+            "div",
+            { style: { fontSize: "13px", color: "#64748b" } },
+            "Índice de Viabilidad"
+          ),
+          React.createElement(
+            "div",
+            {
+              style: { fontSize: "11px", color: "#9ca3af", marginTop: "2px" },
+            },
+            estadisticas.presentes + " de " + estadisticas.total + " categorías"
+          )
+        ),
+        React.createElement(
+          "div",
+          { style: { marginBottom: "15px" } },
+          React.createElement(
+            "h4",
+            {
+              style: {
                 fontSize: "14px",
                 color: "#374151",
                 marginBottom: "12px",
-              }}
-            >
-              Por etapa:
-            </h4>
-            {Object.entries(estadisticas.porCuadrante).map(
-              ([cuadrante, stats]) => (
-                <div
-                  key={cuadrante}
-                  style={{
+              },
+            },
+            "Por etapa:"
+          ),
+          Object.entries(estadisticas.porCuadrante).map(([cuadrante, stats]) =>
+            React.createElement(
+              "div",
+              {
+                key: cuadrante,
+                style: {
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "10px 0",
+                  borderBottom: "1px solid #f1f5f9",
+                },
+              },
+              React.createElement(
+                "span",
+                {
+                  style: {
+                    fontSize: "14px",
+                    color: "#64748b",
+                    fontWeight: "500",
+                  },
+                },
+                cuadrante
+              ),
+              React.createElement(
+                "div",
+                {
+                  style: {
                     display: "flex",
-                    justifyContent: "space-between",
                     alignItems: "center",
-                    padding: "10px 0",
-                    borderBottom: "1px solid #f1f5f9",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "14px",
-                      color: "#64748b",
-                      fontWeight: "500",
-                    }}
-                  >
-                    {cuadrante}
-                  </span>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "12px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "60px",
-                        height: "8px",
-                        backgroundColor: "#e2e8f0",
-                        borderRadius: "4px",
-                        overflow: "hidden",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: `${stats.porcentaje}%`,
-                          height: "100%",
-                          backgroundColor: coloresCuadrante[cuadrante],
-                        }}
-                      />
-                    </div>
-                    <span
-                      style={{
-                        fontSize: "16px",
-                        color: "#374151",
-                        fontWeight: "600",
-                        minWidth: "35px",
-                      }}
-                    >
-                      {stats.porcentaje}%
-                    </span>
-                  </div>
-                </div>
+                    gap: "12px",
+                  },
+                },
+                React.createElement(
+                  "div",
+                  {
+                    style: {
+                      width: "60px",
+                      height: "8px",
+                      backgroundColor: "#e2e8f0",
+                      borderRadius: "4px",
+                      overflow: "hidden",
+                    },
+                  },
+                  React.createElement("div", {
+                    style: {
+                      width: stats.porcentaje + "%",
+                      height: "100%",
+                      backgroundColor: coloresCuadrante[cuadrante],
+                    },
+                  })
+                ),
+                React.createElement(
+                  "span",
+                  {
+                    style: {
+                      fontSize: "16px",
+                      color: "#374151",
+                      fontWeight: "600",
+                      minWidth: "35px",
+                    },
+                  },
+                  stats.porcentaje + "%"
+                )
               )
-            )}
-          </div>
-          <div>
-            <h4
-              style={{
+            )
+          )
+        ),
+        React.createElement(
+          "div",
+          null,
+          React.createElement(
+            "h4",
+            {
+              style: {
                 fontSize: "14px",
                 color: "#374151",
                 marginBottom: "15px",
-              }}
-            >
-              Categorías faltantes para la viabilidad del espacio público:
-            </h4>
-            {estadisticas.presentes === 0 ? (
-              <div
-                style={{
-                  fontSize: "12px",
-                  color: "#64748b",
-                  fontStyle: "italic",
-                  textAlign: "center",
-                  padding: "20px",
-                  backgroundColor: "#f8fafc",
-                  borderRadius: "8px",
-                }}
-              >
-                Selecciona las categorías presentes en tu espacio para ver las
-                recomendaciones
-              </div>
-            ) : estadisticas.porcentaje === 100 ? (
-              <div
-                style={{
-                  fontSize: "12px",
-                  color: "#059669",
-                  fontWeight: "500",
-                  textAlign: "center",
-                  padding: "20px",
-                  backgroundColor: "#f0fdf4",
-                  borderRadius: "8px",
-                }}
-              >
-                ¡Excelente! Tu espacio cuenta con todas las categorías de
-                viabilidad.
-              </div>
-            ) : (
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: "8px" }}
-              >
-                {categorizarFaltantes.esenciales.length > 0 && (
-                  <div
-                    style={{
-                      backgroundColor: "white",
-                      border: "2px solid #dc2626",
-                      padding: "12px 16px",
-                      borderRadius: "8px",
-                      fontSize: "12px",
-                      fontWeight: "600",
-                      width: "100%",
-                      boxSizing: "border-box",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: "6px",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "13px",
-                          fontWeight: "700",
-                          color: "#dc2626",
-                        }}
-                      >
-                        Esenciales
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "16px",
-                          fontWeight: "800",
-                          color: "#dc2626",
-                        }}
-                      >
-                        3.0
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        fontSize: "11px",
-                        lineHeight: "1.2",
-                        wordWrap: "break-word",
-                        overflow: "hidden",
-                        color: "#374151",
-                        fontWeight: "400",
-                      }}
-                    >
-                      {categorizarFaltantes.esenciales
+              },
+            },
+            "Categorías faltantes para la viabilidad del espacio público:"
+          ),
+          estadisticas.presentes === 0
+            ? React.createElement(
+                "div",
+                {
+                  style: {
+                    fontSize: "12px",
+                    color: "#64748b",
+                    fontStyle: "italic",
+                    textAlign: "center",
+                    padding: "20px",
+                    backgroundColor: "#f8fafc",
+                    borderRadius: "8px",
+                  },
+                },
+                "Selecciona las categorías presentes en tu espacio para ver las recomendaciones"
+              )
+            : estadisticas.porcentaje === 100
+            ? React.createElement(
+                "div",
+                {
+                  style: {
+                    fontSize: "12px",
+                    color: "#059669",
+                    fontWeight: "500",
+                    textAlign: "center",
+                    padding: "20px",
+                    backgroundColor: "#f0fdf4",
+                    borderRadius: "8px",
+                  },
+                },
+                "¡Excelente! Tu espacio cuenta con todas las categorías de viabilidad."
+              )
+            : React.createElement(
+                "div",
+                {
+                  style: {
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  },
+                },
+                categorizarFaltantes.esenciales.length > 0 &&
+                  React.createElement(
+                    "div",
+                    {
+                      style: {
+                        backgroundColor: "white",
+                        border: "2px solid #dc2626",
+                        padding: "12px 16px",
+                        borderRadius: "8px",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        width: "100%",
+                        boxSizing: "border-box",
+                      },
+                    },
+                    React.createElement(
+                      "div",
+                      {
+                        style: {
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: "6px",
+                        },
+                      },
+                      React.createElement(
+                        "span",
+                        {
+                          style: {
+                            fontSize: "13px",
+                            fontWeight: "700",
+                            color: "#f59e0b",
+                          },
+                        },
+                        "Importantes"
+                      ),
+                      React.createElement(
+                        "span",
+                        {
+                          style: {
+                            fontSize: "16px",
+                            fontWeight: "800",
+                            color: "#f59e0b",
+                          },
+                        },
+                        "2.0-2.9"
+                      )
+                    ),
+                    React.createElement(
+                      "div",
+                      {
+                        style: {
+                          fontSize: "11px",
+                          lineHeight: "1.2",
+                          wordWrap: "break-word",
+                          overflow: "hidden",
+                          color: "#374151",
+                          fontWeight: "400",
+                        },
+                      },
+                      categorizarFaltantes.importantes
                         .map((item) => item.nombre)
-                        .join(", ")}
-                    </div>
-                  </div>
-                )}
-                {categorizarFaltantes.importantes.length > 0 && (
-                  <div
-                    style={{
-                      backgroundColor: "white",
-                      border: "2px solid #f59e0b",
-                      padding: "12px 16px",
-                      borderRadius: "8px",
-                      fontSize: "12px",
-                      fontWeight: "600",
-                      width: "100%",
-                      boxSizing: "border-box",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: "6px",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "13px",
-                          fontWeight: "700",
-                          color: "#f59e0b",
-                        }}
-                      >
-                        Importantes
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "16px",
-                          fontWeight: "800",
-                          color: "#f59e0b",
-                        }}
-                      >
-                        2.0-2.9
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        fontSize: "11px",
-                        lineHeight: "1.2",
-                        wordWrap: "break-word",
-                        overflow: "hidden",
-                        color: "#374151",
-                        fontWeight: "400",
-                      }}
-                    >
-                      {categorizarFaltantes.importantes
+                        .join(", ")
+                    )
+                  ),
+                categorizarFaltantes.complementarios.length > 0 &&
+                  React.createElement(
+                    "div",
+                    {
+                      style: {
+                        backgroundColor: "white",
+                        border: "2px solid #6b7280",
+                        padding: "12px 16px",
+                        borderRadius: "8px",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        width: "100%",
+                        boxSizing: "border-box",
+                      },
+                    },
+                    React.createElement(
+                      "div",
+                      {
+                        style: {
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: "6px",
+                        },
+                      },
+                      React.createElement(
+                        "span",
+                        {
+                          style: {
+                            fontSize: "13px",
+                            fontWeight: "700",
+                            color: "#6b7280",
+                          },
+                        },
+                        "Complementarios"
+                      ),
+                      React.createElement(
+                        "span",
+                        {
+                          style: {
+                            fontSize: "16px",
+                            fontWeight: "800",
+                            color: "#6b7280",
+                          },
+                        },
+                        "1.0-1.9"
+                      )
+                    ),
+                    React.createElement(
+                      "div",
+                      {
+                        style: {
+                          fontSize: "11px",
+                          lineHeight: "1.2",
+                          wordWrap: "break-word",
+                          overflow: "hidden",
+                          color: "#374151",
+                          fontWeight: "400",
+                        },
+                      },
+                      categorizarFaltantes.complementarios
                         .map((item) => item.nombre)
-                        .join(", ")}
-                    </div>
-                  </div>
-                )}
-                {categorizarFaltantes.complementarios.length > 0 && (
-                  <div
-                    style={{
-                      backgroundColor: "white",
-                      border: "2px solid #6b7280",
-                      padding: "12px 16px",
-                      borderRadius: "8px",
-                      fontSize: "12px",
-                      fontWeight: "600",
-                      width: "100%",
-                      boxSizing: "border-box",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: "6px",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "13px",
-                          fontWeight: "700",
-                          color: "#6b7280",
-                        }}
-                      >
-                        Complementarios
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "16px",
-                          fontWeight: "800",
-                          color: "#6b7280",
-                        }}
-                      >
-                        1.0-1.9
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        fontSize: "11px",
-                        lineHeight: "1.2",
-                        wordWrap: "break-word",
-                        overflow: "hidden",
-                        color: "#374151",
-                        fontWeight: "400",
-                      }}
-                    >
-                      {categorizarFaltantes.complementarios
-                        .map((item) => item.nombre)
-                        .join(", ")}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div
-        style={{
+                        .join(", ")
+                    )
+                  )
+              )
+        )
+      )
+    ),
+    React.createElement(
+      "div",
+      {
+        style: {
           display: "flex",
           justifyContent: "center",
           flexWrap: "wrap",
           marginBottom: "20px",
           gap: "8px",
-        }}
-      >
-        <button
-          style={{
+        },
+      },
+      React.createElement(
+        "button",
+        {
+          style: {
             backgroundColor:
               cuadranteSeleccionado === "todos" ? "#e2e8f0" : "white",
             color: "#64748b",
@@ -860,15 +877,17 @@ export default function App() {
             fontSize: "14px",
             transition: "background-color 0.3s ease",
             outline: "none",
-          }}
-          onClick={() => setCuadranteSeleccionado("todos")}
-        >
-          Todas las etapas
-        </button>
-        {Object.keys(coloresCuadrante).map((cuadrante) => (
-          <button
-            key={cuadrante}
-            style={{
+          },
+          onClick: () => setCuadranteSeleccionado("todos"),
+        },
+        "Todas las etapas"
+      ),
+      Object.keys(coloresCuadrante).map((cuadrante) =>
+        React.createElement(
+          "button",
+          {
+            key: cuadrante,
+            style: {
               backgroundColor:
                 cuadranteSeleccionado === cuadrante
                   ? coloresCuadrante[cuadrante]
@@ -882,15 +901,17 @@ export default function App() {
               fontSize: "14px",
               transition: "background-color 0.3s ease",
               outline: "none",
-            }}
-            onClick={() => setCuadranteSeleccionado(cuadrante)}
-          >
-            {cuadrante}
-          </button>
-        ))}
-        <div style={{ width: "20px" }} />
-        <button
-          style={{
+            },
+            onClick: () => setCuadranteSeleccionado(cuadrante),
+          },
+          cuadrante
+        )
+      ),
+      React.createElement("div", { style: { width: "20px" } }),
+      React.createElement(
+        "button",
+        {
+          style: {
             backgroundColor:
               modoVisualizacion === "actual" ? "#2563eb" : "white",
             color: modoVisualizacion === "actual" ? "white" : "#64748b",
@@ -902,13 +923,15 @@ export default function App() {
             fontSize: "14px",
             transition: "background-color 0.3s ease",
             outline: "none",
-          }}
-          onClick={() => setModoVisualizacion("actual")}
-        >
-          📊 Diagnóstico Actual
-        </button>
-        <button
-          style={{
+          },
+          onClick: () => setModoVisualizacion("actual"),
+        },
+        "📊 Diagnóstico Actual"
+      ),
+      React.createElement(
+        "button",
+        {
+          style: {
             backgroundColor:
               modoVisualizacion === "ideal" ? "#16a34a" : "white",
             color: modoVisualizacion === "ideal" ? "white" : "#64748b",
@@ -920,329 +943,422 @@ export default function App() {
             fontSize: "14px",
             transition: "background-color 0.3s ease",
             outline: "none",
-          }}
-          onClick={() => setModoVisualizacion("ideal")}
-        >
-          🎯 Modelo Ideal
-        </button>
-      </div>
-
-      <div
-        style={{
+          },
+          onClick: () => setModoVisualizacion("ideal"),
+        },
+        "🎯 Modelo Ideal"
+      )
+    ),
+    React.createElement(
+      "div",
+      {
+        style: {
           display: "flex",
           justifyContent: "center",
           marginBottom: "30px",
-        }}
-      >
-        <div
-          style={{
+        },
+      },
+      React.createElement(
+        "div",
+        {
+          style: {
             backgroundColor: "white",
             borderRadius: "16px",
             padding: "20px",
             boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
             border: "1px solid #e2e8f0",
-          }}
-        >
-          <svg
-            width="900"
-            height="900"
-            style={{ display: "block" }}
-            onMouseLeave={() => setPuntoHover(null)}
-          >
-            <defs>
-              <filter
-                id="dropShadow"
-                x="-50%"
-                y="-50%"
-                width="200%"
-                height="200%"
-              >
-                <feDropShadow
-                  dx="0"
-                  dy="2"
-                  stdDeviation="4"
-                  floodColor="rgba(0,0,0,0.2)"
-                />
-              </filter>
-              <radialGradient id="centerGradient" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#ffffff" />
-                <stop offset="100%" stopColor="#f8fafc" />
-              </radialGradient>
-            </defs>
-
-            <circle cx="450" cy="450" r="430" fill="url(#centerGradient)" />
-
-            {[113, 226, 340].map((radio, index) => (
-              <g key={index}>
-                <circle
-                  cx="450"
-                  cy="450"
-                  r={radio}
-                  stroke="#e2e8f0"
-                  strokeWidth="1"
-                  fill="none"
-                />
-                <text
-                  x="470"
-                  y={450 - radio + 5}
-                  fill="#94a3b8"
-                  fontSize="11"
-                  fontWeight="500"
-                >
-                  {((radio / 340) * 3).toFixed(1)}
-                </text>
-              </g>
-            ))}
-
-            {lineasMostrar.map((linea, index) => {
-              const lineasTexto = dividirTexto(linea.nombre, 16);
-              const esLadoDerecho = linea.x2 > 450;
-              const offsetX = esLadoDerecho ? 18 : -18;
-              return (
-                <g key={index}>
-                  <line
-                    x1={linea.x1}
-                    y1={linea.y1}
-                    x2={linea.x2}
-                    y2={linea.y2}
-                    stroke="#cbd5e1"
-                    strokeWidth="1"
-                    opacity="0.4"
-                  />
-                  {lineasTexto.map((lineaTexto, lineaIndex) => (
-                    <text
-                      key={lineaIndex}
-                      x={linea.x2 + offsetX}
-                      y={
-                        linea.y2 +
-                        (lineaIndex - (lineasTexto.length - 1) / 2) * 12
-                      }
-                      textAnchor={esLadoDerecho ? "start" : "end"}
-                      fill="#475569"
-                      fontSize="11"
-                      fontWeight="500"
-                      dominantBaseline="central"
-                    >
-                      {lineaTexto}
-                    </text>
-                  ))}
-                </g>
-              );
-            })}
-
-            {mostrarEspiral && (
-              <path
-                d={`M ${espiralReferencia[0].x} ${
-                  espiralReferencia[0].y
-                } ${espiralReferencia
-                  .slice(1)
-                  .map((p) => `L ${p.x} ${p.y}`)
-                  .join(" ")}`}
-                stroke="#94a3b8"
-                strokeWidth="2"
-                fill="none"
-                opacity="0.3"
-                strokeDasharray="5,5"
-              />
-            )}
-
-            <line
-              x1="90"
-              y1="450"
-              x2="810"
-              y2="450"
-              stroke="#cbd5e1"
-              strokeWidth="2"
-              strokeDasharray="10,5"
-            />
-            <line
-              x1="450"
-              y1="90"
-              x2="450"
-              y2="810"
-              stroke="#cbd5e1"
-              strokeWidth="2"
-              strokeDasharray="10,5"
-            />
-
-            {Object.entries(poligonosConCentro).map(
-              ([cuadrante, triangulos]) => (
-                <g key={`centro-${cuadrante}`}>
-                  {Array.isArray(triangulos) ? (
-                    triangulos.map((triangulo, index) => (
-                      <polygon
-                        key={`${cuadrante}-triangulo-${index}`}
-                        points={triangulo}
-                        fill={coloresCuadrante[cuadrante]}
-                        opacity="0.15"
-                        stroke="none"
-                      />
-                    ))
-                  ) : (
-                    <polygon
-                      points={triangulos}
-                      fill={coloresCuadrante[cuadrante]}
-                      opacity="0.15"
-                      stroke="none"
-                    />
-                  )}
-                </g>
+          },
+        },
+        React.createElement(
+          "svg",
+          {
+            width: "900",
+            height: "900",
+            style: { display: "block" },
+            onMouseLeave: () => setPuntoHover(null),
+          },
+          React.createElement(
+            "defs",
+            null,
+            React.createElement(
+              "filter",
+              {
+                id: "dropShadow",
+                x: "-50%",
+                y: "-50%",
+                width: "200%",
+                height: "200%",
+              },
+              React.createElement("feDropShadow", {
+                dx: "0",
+                dy: "2",
+                stdDeviation: "4",
+                floodColor: "rgba(0,0,0,0.2)",
+              })
+            ),
+            React.createElement(
+              "radialGradient",
+              { id: "centerGradient", cx: "50%", cy: "50%", r: "50%" },
+              React.createElement("stop", {
+                offset: "0%",
+                stopColor: "#ffffff",
+              }),
+              React.createElement("stop", {
+                offset: "100%",
+                stopColor: "#f8fafc",
+              })
+            )
+          ),
+          React.createElement("circle", {
+            cx: "450",
+            cy: "450",
+            r: "430",
+            fill: "url(#centerGradient)",
+          }),
+          [113, 226, 340].map((radio, index) =>
+            React.createElement(
+              "g",
+              { key: index },
+              React.createElement("circle", {
+                cx: "450",
+                cy: "450",
+                r: radio,
+                stroke: "#e2e8f0",
+                strokeWidth: "1",
+                fill: "none",
+              }),
+              React.createElement(
+                "text",
+                {
+                  x: "470",
+                  y: 450 - radio + 5,
+                  fill: "#94a3b8",
+                  fontSize: "11",
+                  fontWeight: "500",
+                },
+                ((radio / 340) * 3).toFixed(1)
               )
-            )}
-
-            {cuadranteSeleccionado !== "todos" && poligonoMostrar && (
-              <polygon
-                points={poligonoMostrar}
-                fill={coloresCuadrante[cuadranteSeleccionado]}
-                opacity="0.2"
-                stroke={coloresCuadrante[cuadranteSeleccionado]}
-                strokeWidth="2"
-              />
-            )}
-
-            {[
-              { nombre: "Rehabilitación", x: 60, y: 60 },
-              { nombre: "Diseño", x: 750, y: 60 },
-              { nombre: "Gestión", x: 60, y: 814 },
-              { nombre: "Construcción", x: 750, y: 814 },
-            ].map(({ nombre, x, y }) => (
-              <g key={nombre}>
-                <rect
-                  x={x}
-                  y={y}
-                  width="90"
-                  height="26"
-                  rx="13"
-                  fill={coloresCuadrante[nombre]}
-                  opacity="0.9"
-                />
-                <text
-                  x={x + 45}
-                  y={y + 16}
-                  textAnchor="middle"
-                  fill="white"
-                  fontSize="12"
-                  fontWeight="600"
-                >
-                  {nombre}
-                </text>
-              </g>
-            ))}
-
-            {puntosMostrar.map((punto, index) => {
-              const tamaño = 5 + punto.valor * 3;
-              const isHovered = puntoHover === punto.id;
-              return (
-                <g key={index}>
-                  <circle
-                    cx={punto.x}
-                    cy={punto.y}
-                    r={tamaño}
-                    fill={
-                      punto.presente && modoVisualizacion === "actual"
-                        ? punto.color
-                        : modoVisualizacion === "actual"
-                        ? "#e2e8f0"
-                        : punto.color
-                    }
-                    stroke="white"
-                    strokeWidth="2"
-                    opacity={
-                      punto.presente && modoVisualizacion === "actual"
-                        ? "0.9"
-                        : modoVisualizacion === "actual"
-                        ? "0.3"
-                        : "0.9"
-                    }
-                    filter="url(#dropShadow)"
-                    style={{ cursor: "pointer", transition: "all 0.2s ease" }}
-                    onMouseEnter={() => setPuntoHover(punto.id)}
-                    transform={isHovered ? `scale(1.3)` : "scale(1)"}
-                    transformOrigin={`${punto.x} ${punto.y}`}
-                  />
-                  <text
-                    x={punto.x}
-                    y={punto.y + 3}
-                    textAnchor="middle"
-                    fill="white"
-                    fontSize="9"
-                    fontWeight="700"
-                    style={{ pointerEvents: "none" }}
-                  >
-                    {modoVisualizacion === "actual"
-                      ? punto.presente
-                        ? punto.valorOriginal
-                        : "0"
-                      : punto.valorOriginal}
-                  </text>
-                  {isHovered && (
-                    <g>
-                      <rect
-                        x={punto.x - 70}
-                        y={punto.y - tamaño - 50}
-                        width="140"
-                        height="40"
-                        rx="8"
-                        fill="#1e293b"
-                        opacity="0.95"
-                        filter="url(#dropShadow)"
-                      />
-                      <text
-                        x={punto.x}
-                        y={punto.y - tamaño - 32}
-                        textAnchor="middle"
-                        fill="white"
-                        fontSize="11"
-                        fontWeight="600"
-                      >
-                        {punto.nombre}
-                      </text>
-                      <text
-                        x={punto.x}
-                        y={punto.y - tamaño - 18}
-                        textAnchor="middle"
-                        fill="#cbd5e1"
-                        fontSize="9"
-                      >
-                        {punto.cuadrante} •{" "}
-                        {modoVisualizacion === "actual"
-                          ? punto.presente
-                            ? ` Presente (${punto.valorOriginal})`
-                            : " No presente"
-                          : ` Valor ideal: ${punto.valorOriginal}`}
-                      </text>
-                    </g>
-                  )}
-                </g>
-              );
-            })}
-          </svg>
-        </div>
-      </div>
-
-      <div
-        style={{
+            )
+          ),
+          lineasMostrar.map((linea, index) => {
+            const lineasTexto = dividirTexto(linea.nombre, 16);
+            const esLadoDerecho = linea.x2 > 450;
+            const offsetX = esLadoDerecho ? 18 : -18;
+            return React.createElement(
+              "g",
+              { key: index },
+              React.createElement("line", {
+                x1: linea.x1,
+                y1: linea.y1,
+                x2: linea.x2,
+                y2: linea.y2,
+                stroke: "#cbd5e1",
+                strokeWidth: "1",
+                opacity: "0.4",
+              }),
+              lineasTexto.map((lineaTexto, lineaIndex) =>
+                React.createElement(
+                  "text",
+                  {
+                    key: lineaIndex,
+                    x: linea.x2 + offsetX,
+                    y:
+                      linea.y2 +
+                      (lineaIndex - (lineasTexto.length - 1) / 2) * 12,
+                    textAnchor: esLadoDerecho ? "start" : "end",
+                    fill: "#475569",
+                    fontSize: "11",
+                    fontWeight: "500",
+                    dominantBaseline: "central",
+                  },
+                  lineaTexto
+                )
+              )
+            );
+          }),
+          mostrarEspiral &&
+            React.createElement("path", {
+              d: `M ${espiralReferencia[0].x} ${
+                espiralReferencia[0].y
+              } ${espiralReferencia
+                .slice(1)
+                .map((p) => `L ${p.x} ${p.y}`)
+                .join(" ")}`,
+              stroke: "#94a3b8",
+              strokeWidth: "2",
+              fill: "none",
+              opacity: "0.3",
+              strokeDasharray: "5,5",
+            }),
+          React.createElement("line", {
+            x1: "90",
+            y1: "450",
+            x2: "810",
+            y2: "450",
+            stroke: "#cbd5e1",
+            strokeWidth: "2",
+            strokeDasharray: "10,5",
+          }),
+          React.createElement("line", {
+            x1: "450",
+            y1: "90",
+            x2: "450",
+            y2: "810",
+            stroke: "#cbd5e1",
+            strokeWidth: "2",
+            strokeDasharray: "10,5",
+          }),
+          Object.entries(poligonosConCentro).map(([cuadrante, triangulos]) =>
+            React.createElement(
+              "g",
+              { key: `centro-${cuadrante}` },
+              Array.isArray(triangulos)
+                ? triangulos.map((triangulo, index) =>
+                    React.createElement("polygon", {
+                      key: `${cuadrante}-triangulo-${index}`,
+                      points: triangulo,
+                      fill: coloresCuadrante[cuadrante],
+                      opacity: "0.15",
+                      stroke: "none",
+                    })
+                  )
+                : React.createElement("polygon", {
+                    points: triangulos,
+                    fill: coloresCuadrante[cuadrante],
+                    opacity: "0.15",
+                    stroke: "none",
+                  })
+            )
+          ),
+          cuadranteSeleccionado !== "todos" &&
+            poligonoMostrar &&
+            React.createElement("polygon", {
+              points: poligonoMostrar,
+              fill: coloresCuadrante[cuadranteSeleccionado],
+              opacity: "0.2",
+              stroke: coloresCuadrante[cuadranteSeleccionado],
+              strokeWidth: "2",
+            }),
+          [
+            { nombre: "Rehabilitación", x: 60, y: 60 },
+            { nombre: "Diseño", x: 750, y: 60 },
+            { nombre: "Gestión", x: 60, y: 814 },
+            { nombre: "Construcción", x: 750, y: 814 },
+          ].map(({ nombre, x, y }) =>
+            React.createElement(
+              "g",
+              { key: nombre },
+              React.createElement("rect", {
+                x: x,
+                y: y,
+                width: "90",
+                height: "26",
+                rx: "13",
+                fill: coloresCuadrante[nombre],
+                opacity: "0.9",
+              }),
+              React.createElement(
+                "text",
+                {
+                  x: x + 45,
+                  y: y + 16,
+                  textAnchor: "middle",
+                  fill: "white",
+                  fontSize: "12",
+                  fontWeight: "600",
+                },
+                nombre
+              )
+            )
+          ),
+          puntosMostrar.map((punto, index) => {
+            const tamaño = 5 + punto.valor * 3;
+            const isHovered = puntoHover === punto.id;
+            return React.createElement(
+              "g",
+              { key: index },
+              React.createElement("circle", {
+                cx: punto.x,
+                cy: punto.y,
+                r: tamaño,
+                fill:
+                  punto.presente && modoVisualizacion === "actual"
+                    ? punto.color
+                    : modoVisualizacion === "actual"
+                    ? "#e2e8f0"
+                    : punto.color,
+                stroke: "white",
+                strokeWidth: "2",
+                opacity:
+                  punto.presente && modoVisualizacion === "actual"
+                    ? "0.9"
+                    : modoVisualizacion === "actual"
+                    ? "0.3"
+                    : "0.9",
+                filter: "url(#dropShadow)",
+                style: { cursor: "pointer", transition: "all 0.2s ease" },
+                onMouseEnter: () => setPuntoHover(punto.id),
+                transform: isHovered ? `scale(1.3)` : "scale(1)",
+                transformOrigin: `${punto.x} ${punto.y}`,
+              }),
+              React.createElement(
+                "text",
+                {
+                  x: punto.x,
+                  y: punto.y + 3,
+                  textAnchor: "middle",
+                  fill: "white",
+                  fontSize: "9",
+                  fontWeight: "700",
+                  style: { pointerEvents: "none" },
+                },
+                modoVisualizacion === "actual"
+                  ? punto.presente
+                    ? punto.valorOriginal
+                    : "0"
+                  : punto.valorOriginal
+              ),
+              isHovered &&
+                React.createElement(
+                  "g",
+                  null,
+                  React.createElement("rect", {
+                    x: punto.x - 70,
+                    y: punto.y - tamaño - 50,
+                    width: "140",
+                    height: "40",
+                    rx: "8",
+                    fill: "#1e293b",
+                    opacity: "0.95",
+                    filter: "url(#dropShadow)",
+                  }),
+                  React.createElement(
+                    "text",
+                    {
+                      x: punto.x,
+                      y: punto.y - tamaño - 32,
+                      textAnchor: "middle",
+                      fill: "white",
+                      fontSize: "11",
+                      fontWeight: "600",
+                    },
+                    punto.nombre
+                  ),
+                  React.createElement(
+                    "text",
+                    {
+                      x: punto.x,
+                      y: punto.y - tamaño - 18,
+                      textAnchor: "middle",
+                      fill: "#cbd5e1",
+                      fontSize: "9",
+                    },
+                    punto.cuadrante +
+                      " • " +
+                      (modoVisualizacion === "actual"
+                        ? punto.presente
+                          ? ` Presente (${punto.valorOriginal})`
+                          : " No presente"
+                        : ` Valor ideal: ${punto.valorOriginal}`)
+                  )
+                )
+            );
+          })
+        )
+      )
+    ),
+    React.createElement(
+      "div",
+      {
+        style: {
           backgroundColor: "white",
           borderRadius: "12px",
           padding: "25px",
           boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
           textAlign: "center",
-        }}
-      >
-        <p
-          style={{
+        },
+      },
+      React.createElement(
+        "p",
+        {
+          style: {
             fontSize: "16px",
             color: "#475569",
             margin: "0",
             fontWeight: "500",
-          }}
-        >
-          <strong>
-            Interpretación de valores: 3 = Esencial | 2 = Importante | 1 =
-            Complementario
-          </strong>
-        </p>
-      </div>
-    </div>
+          },
+        },
+        React.createElement(
+          "strong",
+          null,
+          "Interpretación de valores: 3 = Esencial | 2 = Importante | 1 = Complementario"
+        )
+      )
+    )
   );
-}
+} "100%",
+                        boxSizing: "border-box",
+                      },
+                    },
+                    React.createElement(
+                      "div",
+                      {
+                        style: {
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: "6px",
+                        },
+                      },
+                      React.createElement(
+                        "span",
+                        {
+                          style: {
+                            fontSize: "13px",
+                            fontWeight: "700",
+                            color: "#dc2626",
+                          },
+                        },
+                        "Esenciales"
+                      ),
+                      React.createElement(
+                        "span",
+                        {
+                          style: {
+                            fontSize: "16px",
+                            fontWeight: "800",
+                            color: "#dc2626",
+                          },
+                        },
+                        "3.0"
+                      )
+                    ),
+                    React.createElement(
+                      "div",
+                      {
+                        style: {
+                          fontSize: "11px",
+                          lineHeight: "1.2",
+                          wordWrap: "break-word",
+                          overflow: "hidden",
+                          color: "#374151",
+                          fontWeight: "400",
+                        },
+                      },
+                      categorizarFaltantes.esenciales
+                        .map((item) => item.nombre)
+                        .join(", ")
+                    )
+                  ),
+                categorizarFaltantes.importantes.length > 0 &&
+                  React.createElement(
+                    "div",
+                    {
+                      style: {
+                        backgroundColor: "white",
+                        border: "2px solid #f59e0b",
+                        padding: "12px 16px",
+                        borderRadius: "8px",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        width:
