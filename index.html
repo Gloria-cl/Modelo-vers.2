@@ -1,29 +1,912 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Modelo de Estrategias de Viabilidad para Espacios Públicos</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background-color: #f8fafc;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0 0 10px 0;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #64748b;
+            margin: 0;
+        }
+
+        .main-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            justify-content: center;
+            max-width: 940px;
+            margin: 0 auto 30px auto;
+        }
+
+        .panel {
+            width: 480px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .panel h3 {
+            margin: 0 0 20px 0;
+            color: #1e293b;
+            font-size: 18px;
+        }
+
+        .left-panel {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .category-section {
+            margin-bottom: 20px;
+        }
+
+        .category-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+        }
+
+        .category-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            margin-bottom: 4px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .category-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .category-item.selected {
+            background-color: #f0f9ff;
+            border-color: #e0f2fe;
+        }
+
+        .category-item input {
+            margin-right: 10px;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .category-item span {
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .value-indicator {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        .stats-container {
+            text-align: center;
+            padding: 15px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .stats-percentage {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .stats-label {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .stats-detail {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 2px;
+        }
+
+        .progress-section h4 {
+            font-size: 14px;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+
+        .progress-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .progress-label {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .progress-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-bar {
+            width: 60px;
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-percentage {
+            font-size: 16px;
+            color: #374151;
+            font-weight: 600;
+            min-width: 35px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            gap: 8px;
+        }
+
+        .control-btn {
+            background: white;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+            border-radius: 20px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .control-btn.active {
+            color: white;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .chart-wrapper {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            border: 1px solid #e2e8f0;
+        }
+
+        .footer {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 16px;
+            color: #475569;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .recommendations {
+            margin-top: 15px;
+        }
+
+        .recommendation-box {
+            background: white;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .recommendation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .recommendation-content {
+            font-size: 11px;
+            line-height: 1.2;
+            word-wrap: break-word;
+            color: #374151;
+            font-weight: 400;
+        }
+
+        .essential {
+            border: 2px solid #dc2626;
+        }
+
+        .essential .recommendation-header span:first-child {
+            color: #dc2626;
+        }
+
+        .important {
+            border: 2px solid #f59e0b;
+        }
+
+        .important .recommendation-header span:first-child {
+            color: #f59e0b;
+        }
+
+        .complementary {
+            border: 2px solid #6b7280;
+        }
+
+        .complementary .recommendation-header span:first-child {
+            color: #6b7280;
+        }
+
+        .score-indicator {
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .empty-state {
+            font-size: 12px;
+            color: #64748b;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .success-state {
+            font-size: 12px;
+            color: #059669;
+            font-weight: 500;
+            text-align: center;
+            padding: 20px;
+            background: #f0fdf4;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                padding: 10px;
+            }
+            
+            .panel {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div id="root"></div>
-    
-    <!-- React y ReactDOM desde CDN -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    
-    <!-- Babel para transpilación JSX en tiempo real -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- Tu componente App (convertido para el navegador) -->
-    <script type="text/babel" src="App.js"></script>
-    
-    <!-- Script para renderizar la app -->
-    <script type="text/babel">
-        const { createRoot } = ReactDOM;
-        const root = createRoot(document.getElementById('root'));
-        root.render(React.createElement(App));
+    <div class="header">
+        <h1>Modelo de Estrategias de Viabilidad para Espacios Públicos</h1>
+        <p>Priorización Estratégica - Diagnóstico</p>
+    </div>
+
+    <div class="main-container">
+        <div class="panel left-panel">
+            <h3>Selecciona las categorías presentes en tu espacio</h3>
+            <div id="categories-container"></div>
+        </div>
+
+        <div class="panel">
+            <h3>Diagnóstico del Espacio</h3>
+            <div class="stats-container">
+                <div class="stats-percentage" id="total-percentage">0%</div>
+                <div class="stats-label">Índice de Viabilidad</div>
+                <div class="stats-detail" id="stats-detail">0 de 22 categorías</div>
+            </div>
+            
+            <div class="progress-section">
+                <h4>Por etapa:</h4>
+                <div id="progress-container"></div>
+            </div>
+
+            <div class="recommendations">
+                <h4 style="font-size: 14px; color: #374151; margin-bottom: 15px;">
+                    Categorías faltantes para la viabilidad del espacio público:
+                </h4>
+                <div id="recommendations-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn active" id="btn-todos">Todas las etapas</button>
+        <button class="control-btn" id="btn-diseno" style="--color: #9966ff">Diseño</button>
+        <button class="control-btn" id="btn-construccion" style="--color: #95ca49">Construcción</button>
+        <button class="control-btn" id="btn-gestion" style="--color: #5c8fe6">Gestión</button>
+        <button class="control-btn" id="btn-rehabilitacion" style="--color: #5cd6d6">Rehabilitación</button>
+        
+        <div style="width: 20px;"></div>
+        
+        <button class="control-btn" id="btn-actual">📊 Diagnóstico Actual</button>
+        <button class="control-btn active" id="btn-ideal" style="background-color: #16a34a;">🎯 Modelo Ideal</button>
+    </div>
+
+    <div class="chart-container">
+        <div class="chart-wrapper">
+            <svg width="900" height="900" id="main-chart"></svg>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>Interpretación de valores: 3 = Esencial | 2 = Importante | 1 = Complementario</strong></p>
+    </div>
+
+    <script>
+        // Datos de la aplicación
+        const dataPorCuadrante = {
+            "Diseño": [
+                { nombre: "Funcionalidad", valor: 3.0, angulo: 10, id: "funcionalidad" },
+                { nombre: "Integración Urbana", valor: 2.0, angulo: 20, id: "integracion_urbana" },
+                { nombre: "Innovación", valor: 2.2, angulo: 30, id: "innovacion" },
+                { nombre: "Inclusión", valor: 2.1, angulo: 45, id: "inclusion" },
+                { nombre: "Accesibilidad", valor: 2.0, angulo: 60, id: "accesibilidad" },
+                { nombre: "Confort", valor: 2.7, angulo: 75, id: "confort" },
+                { nombre: "Imagen", valor: 2.5, angulo: 85, id: "imagen" }
+            ],
+            "Construcción": [
+                { nombre: "Sostenibilidad Ambiental", valor: 2.6, angulo: 100, id: "sostenibilidad_ambiental" },
+                { nombre: "Cohesión Social", valor: 3.0, angulo: 115, id: "cohesion_social" },
+                { nombre: "Movilidad Sostenible", valor: 2.5, angulo: 130, id: "movilidad_sostenible" },
+                { nombre: "Materiales Ecológicos", valor: 2.3, angulo: 150, id: "materiales_ecologicos" },
+                { nombre: "Eficiencia Energética", valor: 2.5, angulo: 170, id: "eficiencia_energetica" }
+            ],
+            "Gestión": [
+                { nombre: "Mantenimiento", valor: 2.5, angulo: 195, id: "mantenimiento" },
+                { nombre: "Planificación", valor: 3.0, angulo: 210, id: "planificacion" },
+                { nombre: "Gestión Operativa", valor: 2.6, angulo: 225, id: "gestion_operativa" },
+                { nombre: "Comunicación y Difusión", valor: 2.3, angulo: 240, id: "comunicacion_difusion" },
+                { nombre: "Monitoreo y Evaluación", valor: 3.0, angulo: 255, id: "monitoreo_evaluacion" }
+            ],
+            "Rehabilitación": [
+                { nombre: "Cultura", valor: 2.6, angulo: 285, id: "cultura" },
+                { nombre: "Identidad", valor: 1.7, angulo: 300, id: "identidad" },
+                { nombre: "Participación Ciudadana", valor: 2.7, angulo: 315, id: "participacion_ciudadana" },
+                { nombre: "Responsabilidad Social", valor: 2.8, angulo: 330, id: "responsabilidad_social" },
+                { nombre: "Impacto Económico", valor: 1.6, angulo: 345, id: "impacto_economico" }
+            ]
+        };
+
+        const coloresCuadrante = {
+            "Diseño": "#9966ff",
+            "Construcción": "#95ca49",
+            "Gestión": "#5c8fe6",
+            "Rehabilitación": "#5cd6d6"
+        };
+
+        // Estado de la aplicación
+        let indicadoresActuales = {};
+        let cuadranteSeleccionado = "todos";
+        let modoVisualizacion = "ideal";
+
+        // Inicializar estado
+        function initializeState() {
+            Object.values(dataPorCuadrante).flat().forEach(item => {
+                indicadoresActuales[item.id] = false;
+            });
+        }
+
+        // Renderizar categorías
+        function renderCategories() {
+            const container = document.getElementById('categories-container');
+            container.innerHTML = '';
+
+            Object.entries(dataPorCuadrante).forEach(([cuadrante, items]) => {
+                const section = document.createElement('div');
+                section.className = 'category-section';
+
+                const title = document.createElement('h4');
+                title.className = 'category-title';
+                title.textContent = cuadrante;
+                title.style.color = coloresCuadrante[cuadrante];
+                section.appendChild(title);
+
+                items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'category-item';
+                    if (indicadoresActuales[item.id]) {
+                        itemDiv.classList.add('selected');
+                    }
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = indicadoresActuales[item.id];
+                    checkbox.style.accentColor = coloresCuadrante[cuadrante];
+                    checkbox.addEventListener('change', () => {
+                        indicadoresActuales[item.id] = checkbox.checked;
+                        updateStats();
+                        renderChart();
+                        renderCategories();
+                    });
+
+                    const label = document.createElement('span');
+                    label.innerHTML = `${item.nombre} <span class="value-indicator">(valor: ${item.valor})</span>`;
+
+                    itemDiv.appendChild(checkbox);
+                    itemDiv.appendChild(label);
+                    itemDiv.addEventListener('click', (e) => {
+                        if (e.target !== checkbox) {
+                            checkbox.click();
+                        }
+                    });
+
+                    section.appendChild(itemDiv);
+                });
+
+                container.appendChild(section);
+            });
+        }
+
+        // Actualizar estadísticas
+        function updateStats() {
+            const total = Object.keys(indicadoresActuales).length;
+            const selected = Object.values(indicadoresActuales).filter(Boolean).length;
+            const percentage = Math.round((selected / total) * 100);
+
+            document.getElementById('total-percentage').textContent = percentage + '%';
+            document.getElementById('stats-detail').textContent = `${selected} de ${total} categorías`;
+
+            // Actualizar progreso por cuadrante
+            const progressContainer = document.getElementById('progress-container');
+            progressContainer.innerHTML = '';
+
+            Object.entries(dataPorCuadrante).forEach(([cuadrante, items]) => {
+                const totalCuadrante = items.length;
+                const selectedCuadrante = items.filter(item => indicadoresActuales[item.id]).length;
+                const percentageCuadrante = Math.round((selectedCuadrante / totalCuadrante) * 100);
+
+                const progressItem = document.createElement('div');
+                progressItem.className = 'progress-item';
+
+                const label = document.createElement('span');
+                label.className = 'progress-label';
+                label.textContent = cuadrante;
+
+                const right = document.createElement('div');
+                right.className = 'progress-right';
+
+                const progressBar = document.createElement('div');
+                progressBar.className = 'progress-bar';
+
+                const progressFill = document.createElement('div');
+                progressFill.className = 'progress-fill';
+                progressFill.style.width = percentageCuadrante + '%';
+                progressFill.style.backgroundColor = coloresCuadrante[cuadrante];
+
+                const percentageSpan = document.createElement('span');
+                percentageSpan.className = 'progress-percentage';
+                percentageSpan.textContent = percentageCuadrante + '%';
+
+                progressBar.appendChild(progressFill);
+                right.appendChild(progressBar);
+                right.appendChild(percentageSpan);
+                progressItem.appendChild(label);
+                progressItem.appendChild(right);
+                progressContainer.appendChild(progressItem);
+            });
+
+            // Actualizar recomendaciones
+            updateRecommendations();
+        }
+
+        // Actualizar recomendaciones
+        function updateRecommendations() {
+            const container = document.getElementById('recommendations-container');
+            const selected = Object.values(indicadoresActuales).filter(Boolean).length;
+            const total = Object.keys(indicadoresActuales).length;
+
+            if (selected === 0) {
+                container.innerHTML = '<div class="empty-state">Selecciona las categorías presentes en tu espacio para ver las recomendaciones</div>';
+                return;
+            }
+
+            if (selected === total) {
+                container.innerHTML = '<div class="success-state">¡Excelente! Tu espacio cuenta con todas las categorías de viabilidad.</div>';
+                return;
+            }
+
+            // Categorizar faltantes
+            const faltantes = Object.values(dataPorCuadrante).flat().filter(item => !indicadoresActuales[item.id]);
+            const esenciales = faltantes.filter(item => item.valor === 3.0);
+            const importantes = faltantes.filter(item => item.valor >= 2.0 && item.valor <= 2.9);
+            const complementarios = faltantes.filter(item => item.valor >= 1.0 && item.valor <= 1.9);
+
+            container.innerHTML = '';
+
+            if (esenciales.length > 0) {
+                const box = createRecommendationBox('Esenciales', '3.0', esenciales, 'essential');
+                container.appendChild(box);
+            }
+
+            if (importantes.length > 0) {
+                const box = createRecommendationBox('Importantes', '2.0-2.9', importantes, 'important');
+                container.appendChild(box);
+            }
+
+            if (complementarios.length > 0) {
+                const box = createRecommendationBox('Complementarios', '1.0-1.9', complementarios, 'complementary');
+                container.appendChild(box);
+            }
+        }
+
+        function createRecommendationBox(title, score, items, className) {
+            const box = document.createElement('div');
+            box.className = `recommendation-box ${className}`;
+
+            const header = document.createElement('div');
+            header.className = 'recommendation-header';
+
+            const titleSpan = document.createElement('span');
+            titleSpan.textContent = title;
+
+            const scoreSpan = document.createElement('span');
+            scoreSpan.className = 'score-indicator';
+            scoreSpan.textContent = score;
+
+            header.appendChild(titleSpan);
+            header.appendChild(scoreSpan);
+
+            const content = document.createElement('div');
+            content.className = 'recommendation-content';
+            content.textContent = items.map(item => item.nombre).join(', ');
+
+            box.appendChild(header);
+            box.appendChild(content);
+
+            return box;
+        }
+
+        // Renderizar gráfico
+        function renderChart() {
+            const svg = document.getElementById('main-chart');
+            svg.innerHTML = '';
+
+            // Crear elementos base del SVG
+            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            
+            // Filtro de sombra
+            const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+            filter.setAttribute('id', 'dropShadow');
+            filter.setAttribute('x', '-50%');
+            filter.setAttribute('y', '-50%');
+            filter.setAttribute('width', '200%');
+            filter.setAttribute('height', '200%');
+            
+            const dropShadow = document.createElementNS('http://www.w3.org/2000/svg', 'feDropShadow');
+            dropShadow.setAttribute('dx', '0');
+            dropShadow.setAttribute('dy', '2');
+            dropShadow.setAttribute('stdDeviation', '4');
+            dropShadow.setAttribute('flood-color', 'rgba(0,0,0,0.2)');
+            
+            filter.appendChild(dropShadow);
+            defs.appendChild(filter);
+
+            // Gradiente central
+            const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
+            gradient.setAttribute('id', 'centerGradient');
+            gradient.setAttribute('cx', '50%');
+            gradient.setAttribute('cy', '50%');
+            gradient.setAttribute('r', '50%');
+            
+            const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+            stop1.setAttribute('offset', '0%');
+            stop1.setAttribute('stop-color', '#ffffff');
+            
+            const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+            stop2.setAttribute('offset', '100%');
+            stop2.setAttribute('stop-color', '#f8fafc');
+            
+            gradient.appendChild(stop1);
+            gradient.appendChild(stop2);
+            defs.appendChild(gradient);
+            
+            svg.appendChild(defs);
+
+            // Círculo de fondo
+            const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            bgCircle.setAttribute('cx', '450');
+            bgCircle.setAttribute('cy', '450');
+            bgCircle.setAttribute('r', '430');
+            bgCircle.setAttribute('fill', 'url(#centerGradient)');
+            svg.appendChild(bgCircle);
+
+            // Círculos concéntricos
+            [113, 226, 340].forEach((radio, index) => {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', '450');
+                circle.setAttribute('cy', '450');
+                circle.setAttribute('r', radio);
+                circle.setAttribute('stroke', '#e2e8f0');
+                circle.setAttribute('stroke-width', '1');
+                circle.setAttribute('fill', 'none');
+                svg.appendChild(circle);
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', '470');
+                text.setAttribute('y', 450 - radio + 5);
+                text.setAttribute('fill', '#94a3b8');
+                text.setAttribute('font-size', '11');
+                text.setAttribute('font-weight', '500');
+                text.textContent = ((radio / 340) * 3).toFixed(1);
+                svg.appendChild(text);
+            });
+
+            // Líneas radiales y etiquetas
+            Object.entries(dataPorCuadrante).forEach(([cuadrante, datos]) => {
+                datos.forEach(item => {
+                    const anguloRad = ((item.angulo - 90) * Math.PI) / 180;
+                    const x2 = 450 + Math.cos(anguloRad) * 360;
+                    const y2 = 450 + Math.sin(anguloRad) * 360;
+
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', '450');
+                    line.setAttribute('y1', '450');
+                    line.setAttribute('x2', x2);
+                    line.setAttribute('y2', y2);
+                    line.setAttribute('stroke', '#cbd5e1');
+                    line.setAttribute('stroke-width', '1');
+                    line.setAttribute('opacity', '0.4');
+                    svg.appendChild(line);
+
+                    // Etiqueta
+                    const esLadoDerecho = x2 > 450;
+                    const offsetX = esLadoDerecho ? 18 : -18;
+                    
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', x2 + offsetX);
+                    text.setAttribute('y', y2);
+                    text.setAttribute('text-anchor', esLadoDerecho ? 'start' : 'end');
+                    text.setAttribute('fill', '#475569');
+                    text.setAttribute('font-size', '11');
+                    text.setAttribute('font-weight', '500');
+                    text.setAttribute('dominant-baseline', 'central');
+                    text.textContent = item.nombre.length > 16 ? item.nombre.substring(0, 16) + '...' : item.nombre;
+                    svg.appendChild(text);
+                });
+            });
+
+            // Líneas de cuadrante
+            const line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line1.setAttribute('x1', '90');
+            line1.setAttribute('y1', '450');
+            line1.setAttribute('x2', '810');
+            line1.setAttribute('y2', '450');
+            line1.setAttribute('stroke', '#cbd5e1');
+            line1.setAttribute('stroke-width', '2');
+            line1.setAttribute('stroke-dasharray', '10,5');
+            svg.appendChild(line1);
+
+            const line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line2.setAttribute('x1', '450');
+            line2.setAttribute('y1', '90');
+            line2.setAttribute('x2', '450');
+            line2.setAttribute('y2', '810');
+            line2.setAttribute('stroke', '#cbd5e1');
+            line2.setAttribute('stroke-width', '2');
+            line2.setAttribute('stroke-dasharray', '10,5');
+            svg.appendChild(line2);
+
+            // Etiquetas de cuadrantes
+            const labels = [
+                { nombre: "Rehabilitación", x: 60, y: 60 },
+                { nombre: "Diseño", x: 750, y: 60 },
+                { nombre: "Gestión", x: 60, y: 814 },
+                { nombre: "Construcción", x: 750, y: 814 }
+            ];
+
+            labels.forEach(label => {
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', label.x);
+                rect.setAttribute('y', label.y);
+                rect.setAttribute('width', '90');
+                rect.setAttribute('height', '26');
+                rect.setAttribute('rx', '13');
+                rect.setAttribute('fill', coloresCuadrante[label.nombre]);
+                rect.setAttribute('opacity', '0.9');
+                svg.appendChild(rect);
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', label.x + 45);
+                text.setAttribute('y', label.y + 16);
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('fill', 'white');
+                text.setAttribute('font-size', '12');
+                text.setAttribute('font-weight', '600');
+                text.setAttribute('dominant-baseline', 'central');
+                text.textContent = label.nombre;
+                svg.appendChild(text);
+            });
+
+            // Puntos de datos
+            Object.entries(dataPorCuadrante).forEach(([cuadrante, datos]) => {
+                datos.forEach(item => {
+                    const anguloRad = ((item.angulo - 90) * Math.PI) / 180;
+                    let valor = modoVisualizacion === "actual" 
+                        ? (indicadoresActuales[item.id] ? item.valor : 0) 
+                        : item.valor;
+                    const radio = (valor / 3) * 340;
+                    const x = 450 + Math.cos(anguloRad) * radio;
+                    const y = 450 + Math.sin(anguloRad) * radio;
+                    const tamaño = 5 + valor * 3;
+
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('cx', x);
+                    circle.setAttribute('cy', y);
+                    circle.setAttribute('r', tamaño);
+                    circle.setAttribute('stroke', 'white');
+                    circle.setAttribute('stroke-width', '2');
+                    circle.setAttribute('filter', 'url(#dropShadow)');
+                    circle.setAttribute('style', 'cursor: pointer; transition: all 0.2s ease');
+
+                    if (modoVisualizacion === "actual") {
+                        circle.setAttribute('fill', indicadoresActuales[item.id] ? coloresCuadrante[cuadrante] : '#e2e8f0');
+                        circle.setAttribute('opacity', indicadoresActuales[item.id] ? '0.9' : '0.3');
+                    } else {
+                        circle.setAttribute('fill', coloresCuadrante[cuadrante]);
+                        circle.setAttribute('opacity', '0.9');
+                    }
+
+                    svg.appendChild(circle);
+
+                    // Texto del valor
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', x);
+                    text.setAttribute('y', y + 3);
+                    text.setAttribute('text-anchor', 'middle');
+                    text.setAttribute('fill', 'white');
+                    text.setAttribute('font-size', '9');
+                    text.setAttribute('font-weight', '700');
+                    text.setAttribute('style', 'pointer-events: none');
+                    text.textContent = modoVisualizacion === "actual" 
+                        ? (indicadoresActuales[item.id] ? item.valor : "0")
+                        : item.valor;
+                    svg.appendChild(text);
+                });
+            });
+        }
+
+        // Event listeners para controles
+        function setupControls() {
+            // Botones de cuadrante
+            document.getElementById('btn-todos').addEventListener('click', () => {
+                cuadranteSeleccionado = "todos";
+                updateActiveButton('btn-todos', ['btn-todos', 'btn-diseno', 'btn-construccion', 'btn-gestion', 'btn-rehabilitacion']);
+                renderChart();
+            });
+
+            document.getElementById('btn-diseno').addEventListener('click', () => {
+                cuadranteSeleccionado = "Diseño";
+                updateActiveButton('btn-diseno', ['btn-todos', 'btn-diseno', 'btn-construccion', 'btn-gestion', 'btn-rehabilitacion']);
+                renderChart();
+            });
+
+            document.getElementById('btn-construccion').addEventListener('click', () => {
+                cuadranteSeleccionado = "Construcción";
+                updateActiveButton('btn-construccion', ['btn-todos', 'btn-diseno', 'btn-construccion', 'btn-gestion', 'btn-rehabilitacion']);
+                renderChart();
+            });
+
+            document.getElementById('btn-gestion').addEventListener('click', () => {
+                cuadranteSeleccionado = "Gestión";
+                updateActiveButton('btn-gestion', ['btn-todos', 'btn-diseno', 'btn-construccion', 'btn-gestion', 'btn-rehabilitacion']);
+                renderChart();
+            });
+
+            document.getElementById('btn-rehabilitacion').addEventListener('click', () => {
+                cuadranteSeleccionado = "Rehabilitación";
+                updateActiveButton('btn-rehabilitacion', ['btn-todos', 'btn-diseno', 'btn-construccion', 'btn-gestion', 'btn-rehabilitacion']);
+                renderChart();
+            });
+
+            // Botones de modo
+            document.getElementById('btn-actual').addEventListener('click', () => {
+                modoVisualizacion = "actual";
+                updateActiveButton('btn-actual', ['btn-actual', 'btn-ideal']);
+                document.getElementById('btn-actual').style.backgroundColor = '#2563eb';
+                document.getElementById('btn-ideal').style.backgroundColor = 'white';
+                renderChart();
+            });
+
+            document.getElementById('btn-ideal').addEventListener('click', () => {
+                modoVisualizacion = "ideal";
+                updateActiveButton('btn-ideal', ['btn-actual', 'btn-ideal']);
+                document.getElementById('btn-ideal').style.backgroundColor = '#16a34a';
+                document.getElementById('btn-actual').style.backgroundColor = 'white';
+                renderChart();
+            });
+        }
+
+        function updateActiveButton(activeId, groupIds) {
+            groupIds.forEach(id => {
+                const btn = document.getElementById(id);
+                if (id === activeId) {
+                    btn.classList.add('active');
+                    if (id.includes('btn-') && !id.includes('actual') && !id.includes('ideal') && !id.includes('todos')) {
+                        const color = btn.style.getPropertyValue('--color');
+                        if (color) btn.style.backgroundColor = color;
+                    }
+                } else {
+                    btn.classList.remove('active');
+                    if (id.includes('btn-') && !id.includes('actual') && !id.includes('ideal')) {
+                        btn.style.backgroundColor = 'white';
+                    }
+                }
+            });
+        }
+
+        // Inicializar aplicación
+        function init() {
+            initializeState();
+            renderCategories();
+            updateStats();
+            renderChart();
+            setupControls();
+        }
+
+        // Ejecutar cuando la página esté lista
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
